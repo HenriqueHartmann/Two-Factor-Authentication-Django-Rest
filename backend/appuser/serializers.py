@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from .models import CustomUser as User
+from .models import CustomUser as User, LoginAdmin
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -12,6 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id',
                   'email',
                   'fullname',
+                  'profile',
                   'email_validation')
 
 
@@ -49,3 +50,25 @@ class LoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Incorrect Credentials")
+
+
+class CreateLoginAdminSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LoginAdmin
+        fields = ('id',
+                  'user',
+                  'created_at',
+                  'valid_until')
+
+
+class UpdateLoginAdminSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LoginAdmin
+        fields = ('id', 'active')
+
+
+class PinValidationSerializer(serializers.Serializer):
+
+    pin = serializers.CharField(max_length=6)
